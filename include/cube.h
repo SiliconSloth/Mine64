@@ -1,0 +1,18 @@
+#include <nusys.h>
+
+#define CUBE_SHADE 50
+
+#define V_MIN -1
+#define V_MAX 65
+
+static Vtx cube_verts[] =  {
+  {V_MIN, V_MAX, V_MAX,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MAX, V_MAX, V_MAX,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MAX, V_MIN, V_MAX,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MIN, V_MIN, V_MAX,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+
+  {V_MAX, V_MAX, V_MIN,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MIN, V_MAX, V_MIN,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MIN, V_MIN, V_MIN,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF},
+  {V_MAX, V_MIN, V_MIN,   0, 0, 0,   CUBE_SHADE, CUBE_SHADE, CUBE_SHADE, 0xFF}
+};
