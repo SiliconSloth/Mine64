@@ -14,6 +14,7 @@ LIB = $(ROOT)/usr/lib
 CC  = gcc
 LD  = ld
 MAKEROM = mild
+MAKEMASK = makemask
 
 LCDEFS =	-DNU_DEBUG -DF3DEX_GBI_2
 LCINCS =	-I. -I$(NUSYSINCDIR) -I$(ROOT)/usr/include/PR -I$(INCDIR) -I$(ASSDIR)
@@ -41,3 +42,4 @@ $(CODESEGMENT):	$(CODEOBJECTS) Makefile
 
 $(ROM):	$(CODESEGMENT)
 		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(ROM) -e $(APP)
+		$(MAKEMASK) $(ROM)
