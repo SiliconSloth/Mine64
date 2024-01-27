@@ -16,7 +16,8 @@ as follows:
 2. Find `.minecraft/versions/c0.30_01c/c0.30_01c.jar` in your Minecraft folder.
 3. Extract `default.png` and `terrain.png` from the jar file into the Mine64 project directory.
 4. Create a directory called `assets` in the Mine64 project directory.
-5. Run `python tex2c.py terrain.png` and `python font2c.py default.png`.
+5. Install Python dependencies with `pip install -r requirements.txt`.
+6. Run `python tex2c.py terrain.png` and `python font2c.py default.png`.
 
 This should generate two header files in the `assets` directory.
 
