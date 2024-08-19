@@ -4,7 +4,6 @@
 #include "geometry.h"
 #include "camera.h"
 #include "player.h"
-#include "main.h"
 #include "menu.h"
 #include "quads.h"
 #include "cube.h"
@@ -301,9 +300,8 @@ void drawHUD() {
 
   gSPDisplayList(dlp++, setup_display_list);
 
-  if (in_menu) {
+  if (current_screen != GAME) {
     clearBuffers(GPACK_RGBA5551(0, 0, 0, 1));
-    drawMenu();
   } else {
     gSPDisplayList(dlp++, crosshair_display_list);
 
@@ -316,6 +314,7 @@ void drawHUD() {
       1 << 10, 1 << 10);
     gDPPipeSync(dlp++);
   }
+  drawMenu();
 
   gDPFullSync(dlp++);
   gSPEndDisplayList(dlp++);
@@ -332,7 +331,7 @@ void draw() {
   OSTime t;
   loaded_texture = NULL;
 
-  if (!in_menu) {
+  if (current_screen == GAME) {
     updateVisibleColumns();
     updateCameraMatrices();
 

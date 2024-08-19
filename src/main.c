@@ -1,9 +1,11 @@
 #include <nusys.h>
 #include "main.h"
+#include "menu.h"
 #include "camera.h"
 #include "player.h"
 #include "geometry.h"
 #include "graphics.h"
+#include "storage.h"
 
 void draw(void);
 
@@ -14,14 +16,21 @@ void callbackGfx(int pendingGfx) {
     draw();
   }
 
-  if (in_menu && generating_world) {
+  if (current_screen == GENERATING) {
     initWorld();
     initPlayer();
     initGeometry();
     makeWorldDisplayLists();
 
-    in_menu = FALSE;
-    generating_world = FALSE;
+    current_screen = GAME;
+  }
+
+  if (current_screen == LOADING) {
+    loadGame();
+    initGeometry();
+    makeWorldDisplayLists();
+    
+    current_screen = GAME;
   }
 
   updatePlayer();
@@ -50,12 +59,10 @@ void initVideo() {
 }
 
 void mainproc(void) {
-  in_menu = TRUE;
-  generating_world = FALSE;
-
   initVideo();
   initCamera();
   initGraphics();
+  initStorage();
   
   nuContInit();
   nuGfxFuncSet((NUGfxFunc) callbackGfx);

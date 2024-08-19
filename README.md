@@ -1,12 +1,20 @@
 # Minecraft clone for the N64
 
+**NEW:** Save the game to your cartridge's SD card!
+
 ![screenshot](game.png)
 
 ## Build instructions
 
 Requires the N64 SDK.
 
-### 1. Extract Minecraft textures
+### 1. Build libcart
+
+Download and build libcart from https://github.com/devwizard64/libcart
+
+The Mine64 Makefile expects libcart to be available at `../libcart`.
+
+### 2. Extract Minecraft textures
 
 Mine64 uses the textures and font from Minecraft Classic 0.30.
 To build Mine64, you need to extract two files from your own copy of Minecraft Classic
@@ -21,7 +29,7 @@ as follows:
 
 This should generate two header files in the `assets` directory.
 
-### 2. Build Mine64
+### 3. Build Mine64
 
 You will need Wine to run the SDK on a modern operating system. On Linux (or WSL),
 run the following commands to build Mine64:
@@ -29,7 +37,7 @@ run the following commands to build Mine64:
 ```
 export ROOT=Z:\\path\\to\\ultra
 export N64KITDIR=Z:\\path\\to\\n64kit
-mkdir build
+mkdir -p build/ff
 wine cmd.exe /c build.bat
 ```
 
@@ -48,3 +56,6 @@ These quads are translated into place for rendering.
 ## Acknowledgements
 
 Mine64 uses nowl's Perlin noise implementation in C: https://gist.github.com/nowl/828013
+
+Mine64 uses devwizard's [libcart](https://github.com/devwizard64/libcart) library to access files on the cartridge.
+The files in the `src/ff` and `include/ff` directories were copied from the libcart project.

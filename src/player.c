@@ -1,10 +1,11 @@
 #include <nusys.h>
 #include "player.h"
-#include "main.h"
 #include "math.h"
+#include "menu.h"
 #include "blocks.h"
 #include "graphics.h"
 #include "geometry.h"
+#include "storage.h"
 
 #define START_X 32
 #define START_Z 48
@@ -32,6 +33,10 @@ static Vector3 bounding_box[] = {
 };
 
 static NUContData contData[1];
+
+static u16 down_held = FALSE;
+static u16 up_held = FALSE;
+static u16 act_held = FALSE;
 
 static float y_velocity = 0;
 
@@ -241,15 +246,34 @@ void updatePlayer() {
   float t;
   float t_total = 0;
   int collision_axis = 0;
+  u16 down_pressed;
+  u16 up_pressed;
+  u16 act_pressed;
 
   nuContDataGetEx(contData, 0);
 
-  if (in_menu) {
-    if (contData[0].button) {
-      generating_world = TRUE;
-    } else {
-      return;
+  if (current_screen != GAME) {
+    down_pressed = (contData[0].button & D_CBUTTONS) || contData->stick_y < -50;
+    up_pressed = (contData[0].button & U_CBUTTONS) || contData->stick_y > 50;
+    act_pressed = contData[0].button & (START_BUTTON | A_BUTTON | B_BUTTON);
+
+    if(down_pressed && !down_held) {
+      menuDown();
     }
+    
+    if(up_pressed && !up_held) {
+      menuUp();
+    }
+
+    if (act_pressed && ! act_held) {
+      menuAct();
+    }
+
+    down_held = down_pressed;
+    up_held = up_pressed;
+    act_held = act_pressed;
+
+    return;
   }
 
   yaw -= contData->stick_x / STICK_DAMPER;
@@ -351,5 +375,10 @@ void updatePlayer() {
 
   if (contData[0].trigger & B_BUTTON && target_present) {
     breakBlock(target_x, target_y, target_z);
+  }
+
+  if (saving_available && (contData[0].trigger & (U_JPAD | D_JPAD | L_JPAD | R_JPAD))) {
+    saveGame();
+    save_message_cooldown = 60;
   }
 }
