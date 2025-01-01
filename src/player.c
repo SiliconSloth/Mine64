@@ -12,7 +12,7 @@
 
 #define STICK_DAMPER 22
 
-#define MOVE_SPEED (BLOCK_SIZE / 8)
+#define MOVE_SPEED (1 / 8.f)
 #define JUMP_SPEED (BLOCK_SIZE / 4.5)
 #define TERMINAL_SPEED (BLOCK_SIZE / 2)
 #define GRAVITY (BLOCK_SIZE / 40)
@@ -33,6 +33,8 @@ static Vector3 bounding_box[] = {
 };
 
 static NUContData contData[1];
+
+static OSTime last_time = 0;
 
 static u16 down_held = FALSE;
 static u16 up_held = FALSE;
@@ -241,7 +243,9 @@ u8 onGround() {
   return FALSE;
 }
 
-void updatePlayer() {  
+void updatePlayer() {
+  OSTime time;
+  float delta;
   Vector3 velocity = {0, 0, 0};
   float t;
   float t_total = 0;
@@ -249,8 +253,14 @@ void updatePlayer() {
   u16 down_pressed;
   u16 up_pressed;
   u16 act_pressed;
+  s8 stick_x;
+  s8 stick_y;
 
   nuContDataGetEx(contData, 0);
+
+  time = osGetTime();
+  delta = OS_CYCLES_TO_USEC(time - last_time) * 60 / 1000000.f;
+  last_time = time;
 
   if (current_screen != GAME) {
     down_pressed = (contData[0].button & D_CBUTTONS) || contData->stick_y < -50;
@@ -276,68 +286,66 @@ void updatePlayer() {
     return;
   }
 
-  yaw -= contData->stick_x / STICK_DAMPER;
-  pitch += contData->stick_y / STICK_DAMPER;
+  stick_x = contData->stick_x;
+  stick_y = contData->stick_y;
 
-  if (yaw < 0) {
-    yaw += 360;
-  } else if (yaw >= 360) {
-    yaw -= 360;
+  if (stick_x > -4 && stick_x < 4) {
+    stick_x = 0;
+  }
+  if (stick_y > -4 && stick_y < 4) {
+    stick_y = 0;
   }
 
-  if (pitch < 0) {
-    pitch += 360;
-  } else if (pitch >= 360) {
-    pitch -= 360;
-  }
+  if (contData[0].button & Z_TRIG) {
+    yaw -= stick_x * delta / STICK_DAMPER;
+    pitch += stick_y * delta / STICK_DAMPER;
 
-  if (pitch > 90 && pitch < 180) {
-    pitch = 90;
-  }
+    if (yaw < 0) {
+      yaw += 360;
+    } else if (yaw >= 360) {
+      yaw -= 360;
+    }
 
-  if (pitch < 270 && pitch > 180) {
-    pitch = 270;
-  }
+    if (pitch < 0) {
+      pitch += 360;
+    } else if (pitch >= 360) {
+      pitch -= 360;
+    }
 
-  if(contData[0].button & U_CBUTTONS) {
-    velocity.x -= sinf(yaw * M_DTOR) * MOVE_SPEED;
-    velocity.z -= cosf(yaw * M_DTOR) * MOVE_SPEED;
-  }
+    if (pitch > 90 && pitch < 180) {
+      pitch = 90;
+    }
 
-  if(contData[0].button & D_CBUTTONS) {
-    velocity.x += sinf(yaw * M_DTOR) * MOVE_SPEED;
-    velocity.z += cosf(yaw * M_DTOR) * MOVE_SPEED;
+    if (pitch < 270 && pitch > 180) {
+      pitch = 270;
+    }
+  } else {
+    velocity.x += stick_x * cosf(yaw * M_DTOR) - stick_y * sinf(yaw * M_DTOR);
+    velocity.z -= stick_x * sinf(yaw * M_DTOR) + stick_y * cosf(yaw * M_DTOR);
+
+    velocity.x *= MOVE_SPEED;
+    velocity.z *= MOVE_SPEED;
   }
 
   if(contData[0].button & L_CBUTTONS) {
-    velocity.x -= cosf(yaw * M_DTOR) * MOVE_SPEED;
-    velocity.z += sinf(yaw * M_DTOR) * MOVE_SPEED;
-  }
-
-  if(contData[0].button & R_CBUTTONS) {
-    velocity.x += cosf(yaw * M_DTOR) * MOVE_SPEED;
-    velocity.z -= sinf(yaw * M_DTOR) * MOVE_SPEED;
-  }
-
-  if(contData[0].button & START_BUTTON) {
     if (!block_dec_held) {
         block_dec_held = TRUE;
 
         held_block--;
         if (held_block < 1) {
-          held_block = 7;
+          held_block = 9;
         }
     }
   } else {
     block_dec_held = FALSE;
   }
 
-  if(contData[0].button & R_TRIG) {
+  if(contData[0].button & R_CBUTTONS) {
     if (!block_inc_held) {
       block_inc_held = TRUE;
 
       held_block++;
-      if (held_block > 7) {
+      if (held_block > 9) {
         held_block = 1;
       }
     }
@@ -346,7 +354,7 @@ void updatePlayer() {
   }
 
   if (onGround()) {
-    if(contData[0].button & Z_TRIG) {
+    if(contData[0].button & R_TRIG) {
       y_velocity = JUMP_SPEED;
     } else {
       y_velocity = 0;
@@ -356,6 +364,7 @@ void updatePlayer() {
   }
   velocity.y += y_velocity;
 
+  velocity = mul(velocity, delta);
   while (t_total < 1) {
     t = detectCollision(velocity, 1 - t_total, &collision_axis);
     cam = add(cam, mul(velocity, t - 0.01));

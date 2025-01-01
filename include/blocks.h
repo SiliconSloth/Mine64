@@ -9,5 +9,7 @@
 #define SAND        5
 #define WOOD        6
 #define LEAVES      7
+#define PLANKS      8
+#define BRICKS      9
 
 #endif /* BLOCKS_H */

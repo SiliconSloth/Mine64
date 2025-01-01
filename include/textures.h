@@ -46,6 +46,14 @@ FaceSpec leaves_faces[] = {
   {LEAVES, TRUE, TRUE, TRUE}
 };
 
+FaceSpec planks_faces[] = {
+  {PLANKS, TRUE, TRUE, TRUE}
+};
+
+FaceSpec bricks_faces[] = {
+  {BRICKS, TRUE, TRUE, TRUE}
+};
+
 typedef struct {
   Texture *texture;
   u8 n_faces;
@@ -88,14 +96,23 @@ TextureSpec leaves_spec = {
   &leaves_texture, 1, leaves_faces
 };
 
+TextureSpec planks_spec = {
+  &planks_texture, 1, planks_faces
+};
+
+TextureSpec bricks_spec = {
+  &bricks_texture, 1, bricks_faces
+};
+
 TextureSpec *textures[] = {
-  &dirt_spec, &stone_spec, &grass_top_spec, &grass_side_spec, &cobblestone_spec, &sand_spec, &wood_top_spec, &wood_side_spec, &leaves_spec
+  &dirt_spec, &stone_spec, &grass_top_spec, &grass_side_spec, &cobblestone_spec, &sand_spec,
+  &wood_top_spec, &wood_side_spec, &leaves_spec, &planks_spec, &bricks_spec
 };
 
 Texture *preview_textures[] = {
   NULL, &dirt_texture, &stone_texture, &grass_side_texture,
   &cobblestone_texture, &sand_texture, &wood_side_texture,
-  &leaves_texture
+  &leaves_texture, &planks_texture, &bricks_texture
 };
 
 #define NUM_TEXTURES (sizeof(textures) / sizeof(textures[0]))

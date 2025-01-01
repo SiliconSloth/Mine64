@@ -35,6 +35,8 @@ texture_specs = [
     ("wood_top", 5, 1),
     ("wood_side", 4, 1),
     ("leaves", 6, 1),
+    ("planks", 4, 0),
+    ("bricks", 7, 0)
 ]
 
 

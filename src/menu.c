@@ -46,12 +46,12 @@ static u8 selected_option = 0;
 static char *info_text[] = {
   "Mine64",
   "",
-  "Look around: Analog stick",
-  "Walk: C buttons",
+  "Walk: Analog stick",
+  "Look around: Analog stick + Z trigger",
   "Place block: A button",
   "Break block: B button",
-  "Select block: Start/Right shoulder",
-  "Jump: Z trigger",
+  "Select block: C buttons left/right",
+  "Jump: Right shoulder",
   "Save game: D-Pad"
 };
 
